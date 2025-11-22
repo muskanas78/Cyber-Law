@@ -579,8 +579,9 @@
         retina_detect: true
     });
 
-    // Smart Contract Configuration - UPDATED FOR GANACHE
-    const contractAddress = "0xc240d401B070BDF0E402580559B7c36Ec6eBF256";
+    // Smart Contract Configuration - CORRECTED ADDRESS
+    // Contract Address from 'truffle migrate': 0x85DaC2612353F8F0F26997614A2CB06896B5b20D
+    const contractAddress = "0x85DaC2612353F8F0F26997614A2CB06896B5b20D";
     const abi = [
         {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"inputs":[],"name":"getLawCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
@@ -678,14 +679,20 @@
     // Load Laws Function
     async function loadLaws() {
         try {
+            // Use the provider for view functions if signer isn't connected,
+            // but since contract is created with signer, we check contract existence.
             if (!contract) {
-                showMessage("Please connect your wallet first!", "error");
+                // We can create a read-only contract instance if the wallet isn't connected yet
+                // However, the current logic assumes connection first.
+                showMessage("Please connect your wallet first!", "info");
                 return;
             }
 
             const lawsDiv = document.getElementById("laws");
             lawsDiv.innerHTML = '<div class="loading">Loading laws from blockchain</div>';
 
+            // IMPORTANT: Using contract with signer instance works fine for view calls
+            // as long as the connection is established.
             const allLaws = await contract.getAllLaws();
 
             if (allLaws.length === 0) {
@@ -721,7 +728,7 @@
             document.getElementById("laws").innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">⚠️</div>
-            <p>Failed to load laws. Please try again.</p>
+            <p>Failed to load laws. Please ensure MetaMask is connected to Ganache and refresh.</p>
           </div>
         `;
             showMessage("Failed to load laws: " + error.message, "error");
@@ -749,7 +756,8 @@
         if (window.ethereum) {
             const accounts = await window.ethereum.request({ method: 'eth_accounts' });
             if (accounts.length > 0) {
-                document.getElementById('connectBtn').click();
+                // Use a slight delay to allow the DOM to fully render
+                setTimeout(() => document.getElementById('connectBtn').click(), 100);
             }
         }
     });
