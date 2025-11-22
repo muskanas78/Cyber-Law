@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️ Cyber Law Registry - PECA Pakistan</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            box-shadow: 0 8px 32px rgba(139, 69, 19, 0.1);
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4a574 0%, #8b4513 50%, #d4a574 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #d4a574;
+            font-size: 1em;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* Wallet Section */
+        .wallet-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #d4a574;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            box-shadow: 0 0 10px #ff4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #44ff44;
+            box-shadow: 0 0 10px #44ff44;
+        }
+
+        /* Buttons */
+        button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out 0.4s both;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #d4a574;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d4a574;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1em;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #d4a574;
+            box-shadow: 0 0 15px rgba(139, 69, 19, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Law Display Section */
+        .laws-section {
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .laws-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .law-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .law-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #8b4513, #d4a574);
+        }
+
+        .law-card:hover {
+            transform: translateX(5px);
+            border-color: #d4a574;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.3);
+        }
+
+        .law-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .law-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #d4a574;
+            font-size: 1.1em;
+        }
+
+        .law-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .law-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        /* Loading & Messages */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #d4a574;
+            font-size: 1.1em;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4caf50;
+        }
+
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #2196f3;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes dots {
+            0%, 20% {
+                content: '.';
+            }
+            40% {
+                content: '..';
+            }
+            60%, 100% {
+                content: '...';
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .wallet-status {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b4513, #d4a574);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>⚖️ Cyber Law Registry</h1>
+        <p>🇵🇰 Pakistan Electronic Crimes Act (PECA) - Blockchain Registry</p>
+    </div>
+
+    <!-- Wallet Connection -->
+    <div class="wallet-section">
+        <div class="wallet-status">
+            <div class="status-info">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="walletStatus">Wallet Not Connected</span>
+            </div>
+            <button id="connectBtn">
+                🦊 Connect MetaMask
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="messageArea"></div>
+
+    <!-- Add Law Form -->
+    <div class="form-section">
+        <div class="section-header">
+            <h3>📝 Add New Law</h3>
+            <span style="font-size: 0.85em; color: rgba(212, 165, 116, 0.7);">(Admin Only)</span>
+        </div>
+
+        <div class="form-group">
+            <label for="title">🏛️ Law Title</label>
+            <input
+                    type="text"
+                    id="title"
+                    placeholder="e.g., Section 20 - Cyber Harassment"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="desc">📋 Law Description</label>
+            <textarea
+                    id="desc"
+                    placeholder="e.g., Prohibits online defamation and harassment under PECA."
+            ></textarea>
+        </div>
+
+        <button onclick="addLaw()">
+            ✅ Submit Law to Blockchain
+        </button>
+    </div>
+
+    <!-- View Laws -->
+    <div class="laws-section">
+        <div class="laws-header">
+            <div class="section-header" style="margin: 0;">
+                <h3>📚 Registered Laws</h3>
+            </div>
+            <button onclick="loadLaws()">
+                🔄 Refresh Laws
+            </button>
+        </div>
+        <div id="laws">
+            <div class="empty-state">
+                <div class="empty-state-icon">⚖️</div>
+                <p>Click "Refresh Laws" to view registered cyber laws</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Particles.js Configuration
+    particlesJS('particles-js', {
+        particles: {
+            number: {
+                value: 80,
+                density: {
+                    enable: true,
+                    value_area: 800
+                }
+            },
+            color: {
+                value: '#8b4513'
+            },
+            shape: {
+                type: 'circle'
+            },
+            opacity: {
+                value: 0.3,
+                random: true
+            },
+            size: {
+                value: 3,
+                random: true
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#8b4513',
+                opacity: 0.2,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: 'none',
+                random: false,
+                straight: false,
+                out_mode: 'out',
+                bounce: false
+            }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: 'grab'
+                },
+                onclick: {
+                    enable: true,
+                    mode: 'push'
+                },
+                resize: true
+            },
+            modes: {
+                grab: {
+                    distance: 140,
+                    line_linked: {
+                        opacity: 0.5
+                    }
+                },
+                push: {
+                    particles_nb: 4
+                }
+            }
+        },
+        retina_detect: true
+    });
+
+    // Smart Contract Configuration - UPDATED FOR GANACHE
+    const contractAddress = "0xc240d401B070BDF0E402580559B7c36Ec6eBF256";
+    const abi = [
+        {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+        {"inputs":[],"name":"getLawCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"getLaw","outputs":[{"internalType":"string","name":"","type":"string"},{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"getAllLaws","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"description","type":"string"}],"internalType":"struct CyberLawRegistry.Law[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"string","name":"_title","type":"string"},{"internalType":"string","name":"_description","type":"string"}],"name":"addLaw","outputs":[],"stateMutability":"nonpayable","type":"function"}
+    ];
+
+    let provider, signer, contract;
+
+    // Connect Wallet
+    document.getElementById("connectBtn").addEventListener("click", async () => {
+        try {
+            if (!window.ethereum) {
+                showMessage("Please install MetaMask browser extension!", "error");
+                return;
+            }
+
+            showMessage("Connecting to MetaMask...", "info");
+
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            signer = provider.getSigner();
+            const account = await signer.getAddress();
+
+            // Check network - UPDATED FOR GANACHE
+            const network = await provider.getNetwork();
+            if (network.chainId !== 1337 && network.chainId !== 5777) {
+                showMessage("Please switch to Ganache Local network in MetaMask!", "error");
+                return;
+            }
+
+            contract = new ethers.Contract(contractAddress, abi, signer);
+
+            document.getElementById("walletStatus").textContent = `Connected: ${account.slice(0, 6)}...${account.slice(-4)}`;
+            document.getElementById("statusDot").classList.add("connected");
+            document.getElementById("connectBtn").textContent = "✅ Wallet Connected";
+            document.getElementById("connectBtn").disabled = true;
+
+            showMessage("Wallet connected successfully! 🎉", "success");
+
+            // Auto-load laws
+            setTimeout(() => loadLaws(), 1000);
+        } catch (error) {
+            console.error(error);
+            showMessage("Failed to connect: " + error.message, "error");
+        }
+    });
+
+    // Add Law Function
+    async function addLaw() {
+        try {
+            if (!contract) {
+                showMessage("Please connect your wallet first!", "error");
+                return;
+            }
+
+            const title = document.getElementById("title").value.trim();
+            const desc = document.getElementById("desc").value.trim();
+
+            if (!title || !desc) {
+                showMessage("Please fill in both title and description!", "error");
+                return;
+            }
+
+            showMessage("Submitting transaction... Please confirm in MetaMask", "info");
+
+            const tx = await contract.addLaw(title, desc);
+
+            showMessage("Transaction sent! Waiting for confirmation...", "info");
+
+            await tx.wait();
+
+            showMessage("Law added successfully! 🎉", "success");
+
+            // Clear form
+            document.getElementById("title").value = "";
+            document.getElementById("desc").value = "";
+
+            // Reload laws
+            setTimeout(() => loadLaws(), 2000);
+
+        } catch (error) {
+            console.error(error);
+            if (error.code === 4001) {
+                showMessage("Transaction rejected by user", "error");
+            } else if (error.message.includes("Not authorized")) {
+                showMessage("Only the contract owner can add laws!", "error");
+            } else {
+                showMessage("Transaction failed: " + error.message, "error");
+            }
+        }
+    }
+
+    // Load Laws Function
+    async function loadLaws() {
+        try {
+            if (!contract) {
+                showMessage("Please connect your wallet first!", "error");
+                return;
+            }
+
+            const lawsDiv = document.getElementById("laws");
+            lawsDiv.innerHTML = '<div class="loading">Loading laws from blockchain</div>';
+
+            const allLaws = await contract.getAllLaws();
+
+            if (allLaws.length === 0) {
+                lawsDiv.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p>No laws registered yet. Be the first to add one!</p>
+            </div>
+          `;
+                return;
+            }
+
+            lawsDiv.innerHTML = "";
+
+            allLaws.forEach((law, index) => {
+                const lawCard = document.createElement('div');
+                lawCard.className = 'law-card';
+                lawCard.style.animationDelay = `${index * 0.1}s`;
+                lawCard.innerHTML = `
+            <div class="law-header">
+              <span class="law-id">📜 Law #${law.id}</span>
+            </div>
+            <div class="law-title">${law.title}</div>
+            <div class="law-description">${law.description}</div>
+          `;
+                lawsDiv.appendChild(lawCard);
+            });
+
+            showMessage(`Successfully loaded ${allLaws.length} law(s)`, "success");
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById("laws").innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <p>Failed to load laws. Please try again.</p>
+          </div>
+        `;
+            showMessage("Failed to load laws: " + error.message, "error");
+        }
+    }
+
+    // Show Message Function
+    function showMessage(text, type) {
+        const messageArea = document.getElementById("messageArea");
+        const message = document.createElement('div');
+        message.className = `message ${type}`;
+        message.textContent = text;
+
+        messageArea.innerHTML = '';
+        messageArea.appendChild(message);
+
+        setTimeout(() => {
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 500);
+        }, 5000);
+    }
+
+    // Auto-connect if previously connected
+    window.addEventListener('load', async () => {
+        if (window.ethereum) {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            if (accounts.length > 0) {
+                document.getElementById('connectBtn').click();
+            }
+        }
+    });
+</script>
+</body>
+</html>
