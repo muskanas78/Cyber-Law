@@ -28,7 +28,8 @@ The **Cyber Law Registry** smart contract was successfully compiled and deployed
 ### 📬 Current Deployed Contract Address
 
 **LATEST Contract Address (from `truffle migrate --reset`):**
-`0xc240d401B070BDF0E402580559B7c36Ec6eBF256`
+Before: `0xc240d401B070BDF0E402580559B7c36Ec6eBF256`
+After: `0x85DaC2612353F8F0F26997614A2CB06896B5b20D`
 
 ---
 
