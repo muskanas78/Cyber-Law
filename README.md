@@ -109,7 +109,9 @@ CyberLawRegistry-Truffle
 ---
 
 ## 📷 Project Preview
+<img width="965" height="448" alt="image" src="https://github.com/user-attachments/assets/7c800cce-63a0-4561-831d-971858add169" />
 
+---
 
 ## 👩‍💻 Author
 
