@@ -101,6 +101,7 @@ CyberLawRegistry-Truffle
 │ └── style.css (optional)
 ├── truffle-config.js
 ├── README.md
+├── LICENSE
 └── screenshots/ (showing compile, migrate, and UI interaction)
 ```
 
